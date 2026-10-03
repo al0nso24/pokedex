@@ -5,6 +5,18 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native
 import DetallePokemon from "./DetallePokemon";
 import { Image } from "react-native";
 
+const generaciones = [
+    { nombre: "G1", offset: 0, cantidad: 151 },
+    { nombre: "G2", offset: 151, cantidad: 100 },
+    { nombre: "G3", offset: 251, cantidad: 135 },
+    { nombre: "G4", offset: 386, cantidad: 107 },
+    { nombre: "G5", offset: 493, cantidad: 156 },
+    { nombre: "G6", offset: 649, cantidad: 72 },
+    { nombre: "G7", offset: 721, cantidad: 88 },
+    { nombre: "G8", offset: 809, cantidad: 96 },
+    { nombre: "G9", offset: 905, cantidad: 120 },
+];
+
 export default function Home() {
     const [pokemon, setPokemon] = useState([]);
     const [loading, setloading] = useState(true);
@@ -15,19 +27,22 @@ export default function Home() {
 
     const [name, setName] = useState("");
 
+    const [generacion, setGeneracion] = useState(0) //0 = Gen 1
+
     const fetchPokemon = useCallback(async () => {
         setloading(true);
         setError(null);
-        const res = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=20")
+        const gen = generaciones[generacion];
+        const res = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${gen.cantidad}&offset=${gen.offset}`)
             .then(res => setPokemon(res.data.results))
             .catch(() => setError("Error al cargar los datos :'v"))
             .finally(() => setloading(false));
-    }, []);
+    }, [generacion]);
 
     //Muestra la lista automáticamente al abrir la página
     useEffect(() => {
         fetchPokemon();
-    }, []);
+    }, [fetchPokemon]);
 
     const recargar = useCallback( async() => {
         setReload(true); //empieza a recargar los datos
@@ -72,6 +87,21 @@ export default function Home() {
             <Text style={styles.titulo}>Lista de Pokémon <Image style={styles.imgPokeball} source={require("../../assets/pokeball.png")}></Image></Text>
             <Text>Todos los Pokémon disponibles 🎉</Text>
 
+            <View style={styles.generaciones}>
+                {generaciones.map((gen, index) => (
+                    <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                        setGeneracion(index);
+                        setError(null);
+                    }}
+                    style={[styles.botonGen, index === generacion && styles.botonGenActivo]}
+                    >
+                        <Text style={{color: "white", fontWeight: "bold"}}>{gen.nombre}</Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+
             <TextInput
             style={styles.inputBuscar}
             value={name}
@@ -96,15 +126,15 @@ export default function Home() {
             ) : (
                 <FlatList
                     data={pokemon}
-                    numColumns={2} //2 cards por fila
-                    keyExtractor={(item, index) => index.toString()}
+                    //Cada pokémon tiene nombre único, por eso item.name.toString()
+                    keyExtractor={(item) => item.name.toString()}
                     renderItem={({ item }) => (
                         //TouchableOpacity funciona como tarjeta y botón a la vez
                         <TouchableOpacity
                             style={styles.card_pokemon}
                             onPress={() => seleccionarPokemon(item)}
                         >
-                            <Text style={styles.name}>{item.name}</Text>
+                            <Text style={styles.name}>{item.name.toUpperCase()}</Text>
                             <Text style={styles.url}>{item.url}</Text>
                         </TouchableOpacity>
                     )}
@@ -140,13 +170,11 @@ const styles = StyleSheet.create({
     name: {
         fontWeight: "bold",
         textAlign: "center",
-        marginTop: 20,
-        marginBottom: 20,
-        fontSize: 20
     },
 
     url: {
-        flexShrink: 1 //para que la url no se salga de la tarjeta
+        flexShrink: 1, //para que la url no se salga de la tarjeta
+        textAlign: "center"
     },
 
     reload: {
@@ -178,5 +206,25 @@ const styles = StyleSheet.create({
     imgPokeball: {
         width: 30,
         height: 30,
-    }
+    },
+
+    generaciones: {
+        marginTop: 20,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        gap: 6,
+        marginBottom: 15,
+    },
+
+    botonGen: {
+        backgroundColor: "#2a2a72",
+        borderRadius: 6,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
+
+    botonGenActivo: {
+        backgroundColor: "#b8860b",
+    },
 })
