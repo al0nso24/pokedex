@@ -1,8 +1,11 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+//pokemon = el objeto completo con toda la información
+//onVolver = se ejecuta para volver al inicio
+//Recibe el Pokémon y la función para volver
 export default function DetallePokemon({ pokemon, onVolver }) {
-    //Sprite que viene en la api (creo)
-    const imagen = pokemon.sprites?.front_default;
+    //? = protege por si sprites no existe o es null
+    const imagen = pokemon.sprites?.front_default; //sprite que viene en la api
 
     return (
         <ScrollView style={styles.container}>
@@ -32,6 +35,7 @@ export default function DetallePokemon({ pokemon, onVolver }) {
 
             <View style={styles.seccion}>
                 <Text style={styles.tituloSeccion}>Habilidades</Text>
+                {/*is_hidden = está oculto*/}
                 {pokemon.abilities?.map(({ ability, is_hidden }) => (
                     <Text key={ability.name} style={styles.linea}>
                         {ability.name}{is_hidden ? " (oculta)" : ""}
@@ -51,6 +55,10 @@ export default function DetallePokemon({ pokemon, onVolver }) {
                             <View
                                 style={[
                                     styles.barra,
+                                    //base_stat / 255 = convierte el valor a porcentaje
+                                    //* 100  = para pasarlo a porcentaje
+                                    //Math.min(..., 100) = para que nunca pase el 100%
+                                    //se pone en width para hacer la barra visual
                                     { width: `${Math.min((base_stat / 255) * 100, 100)}%` },
                                 ]}
                             />
@@ -92,7 +100,7 @@ const styles = StyleSheet.create({
     nombre: {
         fontSize: 28,
         fontWeight: "bold",
-        textTransform: "capitalize",
+        textTransform: "capitalize", //le pone una mayúscula inicial al nombre
     },
 
     numero: {
@@ -113,7 +121,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         marginBottom: 10,
-        textTransform: "capitalize",
+        textTransform: "capitalize", //le pone una mayúscula inicial al nombre
     },
 
     listaTipos: {
@@ -129,7 +137,7 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         paddingHorizontal: 12,
         paddingVertical: 6,
-        textTransform: "capitalize",
+        textTransform: "capitalize", //le pone una mayúscula inicial al nombre
     },
 
     datos: {
@@ -159,7 +167,7 @@ const styles = StyleSheet.create({
 
     linea: {
         marginBottom: 6,
-        textTransform: "capitalize",
+        textTransform: "capitalize", //le pone una mayúscula inicial al nombre
     },
 
     estadistica: {
@@ -173,7 +181,7 @@ const styles = StyleSheet.create({
     },
 
     nombreEstadistica: {
-        textTransform: "capitalize",
+        textTransform: "capitalize", //le pone una mayúscula inicial al nombre
     },
 
     fondoBarra: {
@@ -183,9 +191,10 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
 
+    //Esto se llena según la estadística
     barra: {
         backgroundColor: "#5b4bdb",
         borderRadius: 5,
         height: "100%",
-    },
+    }
 });
