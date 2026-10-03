@@ -85,7 +85,7 @@ export default function Home() {
     return(
         <View style={styles.container}>
             <Text style={styles.titulo}>Lista de Pokémon <Image style={styles.imgPokeball} source={require("../../assets/pokeball.png")}></Image></Text>
-            <Text>Todos los Pokémon disponibles 🎉</Text>
+            <Text style={{textAlign: "center"}}>Todos los Pokémon disponibles 🎉</Text>
 
             <View style={styles.generaciones}>
                 {generaciones.map((gen, index) => (
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     card_pokemon: {
         flex: 1,
         margin: 5, //para que las tarjetas no estén tan juntas
-        padding: 10,
+        padding: 7,
         backgroundColor: "#f0f0f0",
         borderRadius: 8,
         borderWidth: 1,
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     },
 
     titulo: {
-        fontSize: 24,
+        fontSize: 34,
         textAlign: "center",
         fontFamily: "Arial",
         fontWeight: "bold",
